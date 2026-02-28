@@ -1,95 +1,207 @@
-# :package_description
+# Modern File Upload for Filament
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cortejojicoy/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/cortejojicoy/modern-file-upload)
+[![Total Downloads](https://img.shields.io/packagist/dt/cortejojicoy/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/cortejojicoy/modern-file-upload)
+[![License](https://img.shields.io/github/license/cortejojicoy/modern-file-upload?style=flat-square)](LICENSE.md)
 
-<!--delete-->
+A modern, React-powered file upload and file viewer plugin for [Filament](https://filamentphp.com). Supports image previews, PDF thumbnails, gallery and list views, dark mode, and an optional document action system (verify/return) — all as a drop-in Filament form field and infolist entry.
+
 ---
-This repo can be used to scaffold a Filament plugin. Follow these steps to get started:
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Make something great!
+## Features
+
+- **Custom file upload field** with drag & drop, progress tracking, and multi-file support
+- **PDF thumbnail rendering** using `pdfjs-dist`
+- **Image & file viewer** with zoom, pan, and page navigation
+- **Dark mode** support out of the box
+- **Gallery and list view** modes
+- **Optional file actions** — attach verify/return controls per file (e.g. for document approval workflows)
+- Assets loaded **on demand** — JS only loads on pages that use the components
+
 ---
-<!--/delete-->
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+## Requirements
+
+- PHP `^8.2`
+- Laravel `^11.0`
+- Filament `^4.0` or `^5.0`
+- Node.js (only needed if contributing or publishing changes)
+
+---
 
 ## Installation
 
-You can install the package via composer:
+Install via Composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require cortejojicoy/modern-file-upload
 ```
 
 > [!IMPORTANT]
-> If you have not set up a custom theme and are using Filament Panels follow the instructions in the [Filament Docs](https://filamentphp.com/docs/4.x/styling/overview#creating-a-custom-theme) first.
+> This plugin ships pre-built JS assets. You do **not** need to run `npm install` or `npm run build` in your app for it to work.
 
-After setting up a custom theme add the plugin's views to your theme css file or your app's css file if using the standalone packages.
+### 1. Register the Plugin
 
-```css
-@source '../../../../vendor/:vendor_slug/:package_slug/resources/**/*.blade.php';
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
-
-This is the contents of the published config file:
+In your Filament Panel provider:
 
 ```php
-return [
-];
+use Kukux\ModernFileUpload\ModernFileUploadPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugin(ModernFileUploadPlugin::make());
+}
 ```
+### 2. Add Plugin Views to Your Tailwind Config
+
+If you are using a custom Filament theme (recommended), add the plugin's source paths so Tailwind includes its utility classes:
+
+```js
+// tailwind.config.js
+export default {
+    darkMode: 'class',
+    content: [
+        // ... your existing paths
+        './vendor/kukux/modern-file-upload/resources/views/**/*.blade.php',
+        './vendor/kukux/modern-file-upload/resources/js/**/*.jsx',
+    ],
+}
+```
+
+Then rebuild your theme:
+
+```bash
+npm run build
+```
+
+> [!NOTE]
+> If you are **not** using a custom theme, the plugin will still work — but dark mode styles may not apply correctly since Filament requires `darkMode: 'class'` in your Tailwind config.
+
+---
 
 ## Usage
 
+### File Upload Field (Form)
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+use Cortejojicoy\ModernFileUpload\Forms\Components\CustomFileUpload;
+
+public static function form(Form $form): Form
+{
+    return $form->schema([
+        CustomFileUpload::make('attachment')
+            ->label('Upload File')
+            ->disk('public')
+            ->directory('uploads/attachments')
+            ->accept('application/pdf')     // MIME type or wildcard
+            ->multiple()                    // allow multiple files
+            ->listView(),                   // or ->galleryView() (default)
+    ]);
+}
 ```
 
-## Testing
+### File Viewer Entry (Infolist)
 
-```bash
-composer test
+```php
+use Cortejojicoy\ModernFileUpload\Infolists\Components\FileViewerEntry;
+
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist->schema([
+        FileViewerEntry::make('attachment')
+            ->label('Attached File')
+            ->showDownload()
+            ->showPdfThumbnails(),
+    ]);
+}
 ```
+
+---
+
+## Optional: File Actions (Verify / Return)
+
+For document approval workflows, you can attach per-file action controls (verify and return buttons) to any upload field. These only appear on **already saved** files — not on fresh temporary uploads.
+
+### 1. Add a Livewire method to your resource or page
+
+```php
+public function updateAction(int $fileId, string $action, ?string $remarks = null): void
+{
+    $file = Attachment::findOrFail($fileId);
+
+    $file->update([
+        'status'  => $action,
+        'remarks' => $remarks,
+    ]);
+}
+```
+
+### 2. Attach the action to your field
+
+```php
+CustomFileUpload::make('attachment')
+    ->disk('public')
+    ->directory('uploads/attachments')
+    ->accept('application/pdf')
+    ->fileAction(function ($record) {
+        return [
+            'method' => 'updateAction',     // your Livewire method name
+            'fileId' => $record?->id,
+            'status' => $record?->status,   // "verified" | "returned" | null
+        ];
+    })
+```
+
+The verify/return buttons will appear on each saved PDF thumbnail. A confirmation modal is shown before any action is taken. Returned documents require a remarks/reason field before confirming.
+
+---
+
+## Available Methods
+
+### `CustomFileUpload`
+
+| Method | Description |
+|---|---|
+| `->disk(string $disk)` | Storage disk (default: `public`) |
+| `->directory(string $path)` | Upload directory |
+| `->accept(string $mime)` | Accepted MIME types (e.g. `application/pdf`, `image/*`) |
+| `->multiple(bool $condition)` | Allow multiple file uploads |
+| `->galleryView()` | Display files in a grid (default) |
+| `->listView()` | Display files in a list |
+| `->fileAction(\Closure $callback)` | Attach verify/return action controls |
+
+### `FileViewerEntry`
+
+| Method | Description |
+|---|---|
+| `->showDownload(bool $condition)` | Show download button (default: `true`) |
+| `->showPdfThumbnails(bool $condition)` | Render PDF first-page thumbnails (default: `true`) |
+
+---
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for what has changed in each release.
+
 
 ## Contributing
 
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+Contributions are welcome! Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
-## Security Vulnerabilities
 
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
+## Security
+
+If you discover a security vulnerability, please review our [Security Policy](.github/SECURITY.md).
+
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [cortejojicoy](https://github.com/cortejojicoy)
 - [All Contributors](../../contributors)
+
+---
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see the [License File](LICENSE.md) for more information.
