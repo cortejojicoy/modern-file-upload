@@ -34,7 +34,7 @@ A modern, React-powered file upload and file viewer plugin for [Filament](https:
 Install via Composer:
 
 ```bash
-composer require cortejojicoy/modern-file-upload
+composer require kukux/modern-file-upload
 ```
 
 > [!IMPORTANT]
