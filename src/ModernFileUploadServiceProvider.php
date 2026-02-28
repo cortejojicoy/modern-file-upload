@@ -27,10 +27,10 @@ class ModernFileUploadServiceProvider extends PackageServiceProvider
                 __DIR__ . '/../resources/dist/file-uploader.js'
             )->loadedOnRequest(),
 
-            Js::make(
-                'modern-file-viewer',
-                __DIR__ . '/../resources/dist/file-viewer.js'
-            )->loadedOnRequest(),
+            // Js::make(
+            //     'modern-file-viewer',
+            //     __DIR__ . '/../resources/dist/file-viewer.js'
+            // )->loadedOnRequest(),
         ], package: 'kukux/modern-file-upload');
     }
 }
