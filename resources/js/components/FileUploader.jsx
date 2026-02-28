@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { createPortal } from "react-dom";
-import FileViewer from "../components/FileViewer";
-import PDFThumbnail from "./FileViewer/PDFThumbnail";
+import FileViewer from "../components/File/index";
+import PDFThumbnail from "./File/PDFThumbnail";
 
 const formatBytes = (bytes) => {
     if (!bytes) return "";
@@ -17,8 +17,7 @@ const UploadPlaceholder = ({ multiple, inputId }) => (
         className="flex flex-col items-center justify-center gap-2 cursor-pointertext-gray-400 dark:text-gray-500 select-none w-full h-full"
     >
         <svg
-            className="w-8 h-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
+            className="w-8 h-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16v-8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/>
         </svg>
         <span className="text-sm font-medium">
@@ -309,19 +308,5 @@ function FileUploader({
         </>
     );
 }
-
-
-window.mountReactFileUpload = (el, state, wire, props = {}) => {
-    if (el.__reactRoot) return;
-    const root = ReactDOM.createRoot(el);
-    el.__reactRoot = root;
-    root.render(
-        <FileUploader
-            state={state}
-            wire={wire}
-            {...props}
-        />
-    );
-};
 
 export default FileUploader;
