@@ -85,12 +85,12 @@ npm run build
 ### File Upload Field (Form)
 
 ```php
-use Cortejojicoy\ModernFileUpload\Forms\Components\CustomFileUpload;
+use Kukux\ModernFileUpload\Forms\Components\FileUpload;
 
 public static function form(Form $form): Form
 {
     return $form->schema([
-        CustomFileUpload::make('attachment')
+        FileUpload::make('attachment')
             ->label('Upload File')
             ->disk('public')
             ->directory('uploads/attachments')
@@ -104,12 +104,12 @@ public static function form(Form $form): Form
 ### File Viewer Entry (Infolist)
 
 ```php
-use Cortejojicoy\ModernFileUpload\Infolists\Components\FileViewerEntry;
+use Kukux\ModernFileUpload\Infolists\Components\FileViewer;
 
 public static function infolist(Infolist $infolist): Infolist
 {
     return $infolist->schema([
-        FileViewerEntry::make('attachment')
+        FileViewer::make('attachment')
             ->label('Attached File')
             ->showDownload()
             ->showPdfThumbnails(),
@@ -140,7 +140,7 @@ public function updateAction(int $fileId, string $action, ?string $remarks = nul
 ### 2. Attach the action to your field
 
 ```php
-CustomFileUpload::make('attachment')
+FileUpload::make('attachment')
     ->disk('public')
     ->directory('uploads/attachments')
     ->accept('application/pdf')
@@ -159,7 +159,7 @@ The verify/return buttons will appear on each saved PDF thumbnail. A confirmatio
 
 ## Available Methods
 
-### `CustomFileUpload`
+### `FileUpload`
 
 | Method | Description |
 |---|---|
@@ -171,7 +171,7 @@ The verify/return buttons will appear on each saved PDF thumbnail. A confirmatio
 | `->listView()` | Display files in a list |
 | `->fileAction(\Closure $callback)` | Attach verify/return action controls |
 
-### `FileViewerEntry`
+### `FileViewer`
 
 | Method | Description |
 |---|---|
