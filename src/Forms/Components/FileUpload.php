@@ -88,6 +88,11 @@ class FileUpload extends Field
         return null;
     }
 
+    public function getDisk(): string
+    {
+        return $this->disk;
+    }
+
     public function getAccept(): ?string
     {
         return $this->accept;
