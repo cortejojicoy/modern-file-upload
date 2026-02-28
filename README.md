@@ -1,8 +1,8 @@
 # Modern File Upload for Filament
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/cortejojicoy/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/cortejojicoy/modern-file-upload)
-[![Total Downloads](https://img.shields.io/packagist/dt/cortejojicoy/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/cortejojicoy/modern-file-upload)
-[![License](https://img.shields.io/github/license/cortejojicoy/modern-file-upload?style=flat-square)](LICENSE.md)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kukux/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/kukux/modern-file-upload)
+[![Total Downloads](https://img.shields.io/packagist/dt/kukux/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/kukux/modern-file-upload)
+[![License](https://img.shields.io/github/license/kukux/modern-file-upload?style=flat-square)](LICENSE.md)
 
 A modern, React-powered file upload and file viewer plugin for [Filament](https://filamentphp.com). Supports image previews, PDF thumbnails, gallery and list views, dark mode, and an optional document action system (verify/return) — all as a drop-in Filament form field and infolist entry.
 
