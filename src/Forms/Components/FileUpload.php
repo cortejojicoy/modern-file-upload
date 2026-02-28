@@ -92,4 +92,10 @@ class FileUpload extends Field
     {
         return $this->accept;
     }
+
+    public function getIsMultiple(): bool
+    {
+        return $this->isMultiple;
+    }
+
 } 
