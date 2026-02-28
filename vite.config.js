@@ -13,7 +13,6 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 "file-uploader": "resources/js/file-uploader.jsx",
-                // "file-viewer":   "resources/js/file-viewer.js",
             },
             output: {
                 entryFileNames: "[name].js",
