@@ -40,20 +40,8 @@ composer require kukux/modern-file-upload
 > [!IMPORTANT]
 > This plugin ships pre-built JS assets. You do **not** need to run `npm install` or `npm run build` in your app for it to work.
 
-### 1. Register the Plugin
 
-In your Filament Panel provider:
-
-```php
-use Kukux\ModernFileUpload\ModernFileUploadPlugin;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        ->plugin(ModernFileUploadPlugin::make());
-}
-```
-### 2. Add Plugin Views to Your Tailwind Config
+### 1. Add Plugin Views to Your Tailwind Config
 
 If you are using a custom Filament theme (recommended), add the plugin's source paths so Tailwind includes its utility classes:
 
@@ -75,8 +63,28 @@ Then rebuild your theme:
 npm run build
 ```
 
-> [!NOTE]
-> If you are **not** using a custom theme, the plugin will still work — but dark mode styles may not apply correctly since Filament requires `darkMode: 'class'` in your Tailwind config.
+### 2. Add the Trait to Your Page
+The file upload component calls `getTempFileUrl()` on your Livewire page to generate temporary preview URLs after upload. Add the trait to every page that uses the `FileUpload` component:
+```php
+use Kukux\ModernFileUpload\Concerns\HasTemporaryFileUrl;
+
+class CreateDocument extends CreateRecord
+{
+    use HasTemporaryFileUrl;
+
+    protected static string $resource = DocumentResource::class;
+}
+```
+
+This applies to any Filament page type:
+
+| Page Type | Class to extend |
+|---|---|
+| Create page | `CreateRecord` |
+| Edit page | `EditRecord` |
+| Custom page | `Page` |
+| Livewire component | `Component` |
+
 
 ---
 
@@ -94,9 +102,8 @@ public static function form(Form $form): Form
             ->label('Upload File')
             ->disk('public')
             ->directory('uploads/attachments')
-            ->accept('application/pdf')     // MIME type or wildcard
-            ->multiple()                    // allow multiple files
-            ->listView(),                   // or ->galleryView() (default)
+            ->accept('application/pdf')     
+            ->multiple()                    
     ]);
 }
 ```
@@ -167,8 +174,6 @@ The verify/return buttons will appear on each saved PDF thumbnail. A confirmatio
 | `->directory(string $path)` | Upload directory |
 | `->accept(string $mime)` | Accepted MIME types (e.g. `application/pdf`, `image/*`) |
 | `->multiple(bool $condition)` | Allow multiple file uploads |
-| `->galleryView()` | Display files in a grid (default) |
-| `->listView()` | Display files in a list |
 | `->fileAction(\Closure $callback)` | Attach verify/return action controls |
 
 ### `FileViewer`
