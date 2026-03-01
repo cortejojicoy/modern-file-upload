@@ -189,7 +189,7 @@ function FileUploader({
                 }
             );
         });
-        e.target.value = "";
+        event.target.value = "";
     };
 
     // const handleRemove = async (index) => {
