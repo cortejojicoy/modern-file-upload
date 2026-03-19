@@ -4,7 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/kukux/modern-file-upload.svg?style=flat-square)](https://packagist.org/packages/kukux/modern-file-upload)
 [![License](https://img.shields.io/github/license/kukux/modern-file-upload?style=flat-square)](LICENSE.md)
 
-A modern, React-powered file upload and file viewer plugin for [Filament](https://filamentphp.com). Supports image previews, PDF thumbnails, gallery and list views, dark mode, and an optional document action system (verify/return) — all as a drop-in Filament form field and infolist entry.
+A modern, React-powered file upload and file viewer plugin for [Filament](https://filamentphp.com). Supports Filament `^3.0`, `^4.0`, and `^5.0` with image previews, PDF thumbnails, gallery and list views, dark mode, and an optional document action system (verify/return) as a drop-in Filament form field and infolist entry.
 
 ---
 
@@ -23,8 +23,8 @@ A modern, React-powered file upload and file viewer plugin for [Filament](https:
 ## Requirements
 
 - PHP `^8.2`
-- Laravel `^11.0`
-- Filament `^4.0` or `^5.0`
+- Laravel version compatible with your chosen Filament major
+- Filament `^3.0`, `^4.0`, or `^5.0`
 - Node.js (only needed if contributing or publishing changes)
 
 ---
@@ -38,7 +38,7 @@ composer require kukux/modern-file-upload
 ```
 
 > [!IMPORTANT]
-> This plugin ships pre-built JS assets. You do **not** need to run `npm install` or `npm run build` in your app for it to work.
+> This plugin ships pre-built JS assets. After installation or package updates, run `php artisan filament:assets` in your app so Filament can publish the package assets.
 
 
 ### 1. Add Plugin Views to Your Tailwind Config
@@ -63,8 +63,18 @@ Then rebuild your theme:
 npm run build
 ```
 
-### 2. Add the Trait to Your Page
-The file upload component calls `getTempFileUrl()` on your Livewire page to generate temporary preview URLs after upload. Add the trait to every page that uses the `FileUpload` component:
+### 2. Publish Filament Assets
+
+Run:
+
+```bash
+php artisan filament:assets
+```
+
+### 3. Add the Trait to Your Page for Temporary Previews
+
+Fresh uploads use `getTempFileUrl()` to render previews before the form is saved. Add the trait to every Filament page or Livewire component that uses the upload field:
+
 ```php
 use Kukux\ModernFileUpload\Concerns\HasTemporaryFileUrl;
 
@@ -75,18 +85,6 @@ class CreateDocument extends CreateRecord
     protected static string $resource = DocumentResource::class;
 }
 ```
-
-This applies to any Filament page type:
-
-| Page Type | Class to extend |
-|---|---|
-| Create page | `CreateRecord` |
-| Edit page | `EditRecord` |
-| Custom page | `Page` |
-| Livewire component | `Component` |
-
-
----
 
 ## Usage
 

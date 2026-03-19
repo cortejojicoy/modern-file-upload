@@ -1,41 +1,50 @@
+@php
+    $assetPackage = 'kukux/modern-file-upload';
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
 >
     <div
-        x-data="{ state: $wire.entangle(@js($getStatePath())) }"
+        x-data="{
+            state: $wire.entangle(@js($getStatePath())),
+            mount() {
+                if (! window.mountReactFileUpload) {
+                    window.setTimeout(() => this.mount(), 50)
+
+                    return
+                }
+
+                window.mountReactFileUpload(this.$refs.uploader, {
+                    wire: $wire,
+                    name: @js($getStatePath()),
+                    state: this.state,
+                    setState: (value) => this.state = value,
+                    multiple: @js($getIsMultiple()),
+                    accept: @js($getAccept() ?? '*/*'),
+                    fileAction: @js($getFileAction()),
+                    initialFiles: @js($getFilesForJs()),
+                })
+            },
+            init() {
+                this.$nextTick(() => this.mount())
+
+                this.$watch('state', (value) => {
+                    this.$refs.uploader.dispatchEvent(
+                        new CustomEvent('modern-file-upload:set-state', {
+                            detail: value,
+                        }),
+                    )
+                })
+            },
+        }"
+        x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('modern-file-uploader', package: $assetPackage))]"
         {{ $getExtraAttributeBag() }}
     >
-        {{-- React mount point --}}
-        <div 
-            id="react-file-upload"
-            data-state-path="{{ $getStatePath() }}"
-            data-name="{{ $getName() }}"
-            data-base-url="{{ $getUrl() }}"
+        <div
+            x-ref="uploader"
             wire:ignore
-            x-init="
-                $nextTick(() => {
-
-                    if (window.mountReactFileUpload) {
-                        window.mountReactFileUpload(
-                            $el, 
-                            state, 
-                            $wire, 
-                            {
-                                multiple: @js($getIsMultiple()),
-                                accept: @js($getAccept() ?? '*/*'),
-                                disk: @js($getDisk()),     // 
-                                baseUrl: $el.dataset.baseUrl,
-                                name: @js($getStatePath()),
-                                fileAction: @js($getFileAction())
-                            }
-                        );
-                    }
-                })
-            "
         ></div>
-
-        {{-- Hidden input keeps Livewire state in sync --}}
-        <input type="hidden" x-model="state">
     </div>
 </x-dynamic-component>
