@@ -75,6 +75,34 @@ php artisan filament:assets
 
 Fresh uploads are previewed in the browser before the form is saved, so no extra Livewire page trait is required for normal image or PDF previews.
 
+If your app still uses Livewire temporary preview configuration for PDFs, make sure the `preview_mimes` entry uses the extension format:
+
+```php
+'temporary_file_upload' => [
+    'preview_mimes' => [
+        'png',
+        'gif',
+        'bmp',
+        'svg',
+        'wav',
+        'mp4',
+        'mov',
+        'avi',
+        'wmv',
+        'mp3',
+        'm4a',
+        'jpg',
+        'jpeg',
+        'mpga',
+        'webp',
+        'wma',
+        'pdf',
+    ],
+],
+```
+
+Use `'pdf'`, not `'application/pdf'`.
+
 ## Usage
 
 ### File Upload Field (Form)

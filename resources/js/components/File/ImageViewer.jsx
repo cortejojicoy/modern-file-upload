@@ -6,13 +6,20 @@ export default function ImageViewer({ pages, currentPage, zoom, containerRef}) {
     const currentImage = pages.find((p) => p.id === currentPage);
     
     if (!currentImage) return (
-        <div className="flex-1 flex items-center justify-center bg-black/40">
+        <div
+            className="flex flex-1 items-center justify-center"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
+        >
             <p className="text-sm text-white/50">No image to display.</p>
         </div>
     );
 
     return (
-        <div ref={containerRef} className="flex-1 overflow-auto flex items-center justify-center p-6 bg-black/40">
+        <div
+            ref={containerRef}
+            className="flex flex-1 items-center justify-center overflow-auto p-6"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
+        >
             <TransformWrapper
                 initialScale={zoom}
                 minScale={0.5}

@@ -43,7 +43,11 @@ export default function PdfViewer({ file, zoom, pages, setPages, pageCount, setP
   }, [zoom, pages]);
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-auto p-6 bg-black/40">
+    <div
+      ref={containerRef}
+      className="flex-1 overflow-auto p-6"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
+    >
       {Array.from({ length: pageCount }).map((_, i) => (
         <canvas
           key={i}

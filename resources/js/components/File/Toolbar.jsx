@@ -7,7 +7,10 @@ export default function Toolbar({ file, onClose }) {
   };
 
   return (
-    <div className="flex justify-between items-center px-6 py-3 bg-black/40 text-white shadow-lg backdrop-blur-sm">
+    <div
+      className="flex justify-between items-center px-6 py-3 text-white shadow-lg"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.72)" }}
+    >
       <div className="flex gap-3">
         <button onClick={handlePrint} className="hover:text-gray-300">
           <Printer />
