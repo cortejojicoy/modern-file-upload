@@ -27,13 +27,23 @@ class FileUpload extends Field
         parent::setUp();
 
         $this->afterStateHydrated(function (self $component, mixed $state): void {
-            if ($component->isMultiple() && blank($state)) {
+            $normalizedState = $component->normalizeStateForMode($state);
+
+            if ($component->isMultiple() && blank($normalizedState)) {
                 $component->state([]);
+
+                return;
+            }
+
+            if ($normalizedState !== $state) {
+                $component->state($normalizedState);
             }
         });
 
         $this->dehydrateStateUsing(function (self $component, mixed $state): mixed {
-            return $component->storeUploadedFiles($state);
+            return $component->storeUploadedFiles(
+                $component->normalizeStateForMode($state),
+            );
         });
     }
 
@@ -89,7 +99,7 @@ class FileUpload extends Field
 
     public function getFilesForJs(): array
     {
-        $state = $this->getState();
+        $state = $this->normalizeStateForMode($this->getState());
 
         if (blank($state)) {
             return [];
@@ -130,6 +140,8 @@ class FileUpload extends Field
 
     protected function storeUploadedFiles(mixed $state): mixed
     {
+        $state = $this->normalizeStateForMode($state);
+
         if ($this->isMultiple()) {
             return collect($this->wrapState($state))
                 ->filter(fn (mixed $file): bool => filled($file))
@@ -143,6 +155,27 @@ class FileUpload extends Field
         }
 
         return $this->storeUploadedFile($state);
+    }
+
+    protected function normalizeStateForMode(mixed $state): mixed
+    {
+        if ($this->isMultiple()) {
+            return blank($state)
+                ? []
+                : $this->wrapState($state);
+        }
+
+        if (blank($state)) {
+            return null;
+        }
+
+        if (is_array($state)) {
+            return collect($state)
+                ->filter(fn (mixed $file): bool => filled($file))
+                ->first();
+        }
+
+        return $state;
     }
 
     protected function storeUploadedFile(mixed $file): mixed
