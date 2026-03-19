@@ -43,6 +43,14 @@ const getFileIcon = (type) => {
     return "FILE";
 };
 
+const createPreviewUrl = (file) => {
+    try {
+        return URL.createObjectURL(file);
+    } catch {
+        return null;
+    }
+};
+
 const formatBytes = (bytes) => {
     if (!bytes) return "";
     if (bytes < 1024) return `${bytes} B`;
@@ -223,13 +231,7 @@ function FileUploader({
                 name,
                 file,
                 async (uploadedStateValue) => {
-                    let temporaryUrl = null;
-
-                    try {
-                        temporaryUrl = await wire.call("getTempFileUrl", uploadedStateValue);
-                    } catch (error) {
-                        console.warn("Temporary preview URL is unavailable.", error);
-                    }
+                    const temporaryUrl = createPreviewUrl(file);
 
                     const uploadedFile = {
                         name: file.name,
@@ -288,8 +290,21 @@ function FileUploader({
         }
 
         syncState(nextState);
+        if (fileToRemove.isTemp && fileToRemove.url?.startsWith("blob:")) {
+            URL.revokeObjectURL(fileToRemove.url);
+        }
         setFiles((prev) => prev.filter((file) => file.path !== fileToRemove.path));
     };
+
+    useEffect(() => {
+        return () => {
+            files.forEach((file) => {
+                if (file.isTemp && file.url?.startsWith("blob:")) {
+                    URL.revokeObjectURL(file.url);
+                }
+            });
+        };
+    }, [files]);
 
     return (
         <>
