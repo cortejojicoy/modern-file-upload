@@ -71,20 +71,9 @@ Run:
 php artisan filament:assets
 ```
 
-### 3. Add the Trait to Your Page for Temporary Previews
+### 3. Temporary Preview Behavior
 
-Fresh uploads use `getTempFileUrl()` to render previews before the form is saved. Add the trait to every Filament page or Livewire component that uses the upload field:
-
-```php
-use Kukux\ModernFileUpload\Concerns\HasTemporaryFileUrl;
-
-class CreateDocument extends CreateRecord
-{
-    use HasTemporaryFileUrl;
-
-    protected static string $resource = DocumentResource::class;
-}
-```
+Fresh uploads are previewed in the browser before the form is saved, so no extra Livewire page trait is required for normal image or PDF previews.
 
 ## Usage
 
