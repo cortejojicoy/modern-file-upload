@@ -30,10 +30,12 @@ export default function FileViewer({ file, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[1000] flex flex-col"
+            className="fixed inset-0 flex flex-col"
             style={{
+                zIndex: 2147483647,
                 backgroundColor: "rgba(0, 0, 0, 0.88)",
                 backdropFilter: "blur(2px)",
+                WebkitBackdropFilter: "blur(2px)",
             }}
         >
             <Toolbar file={file} onClose={onClose} />
